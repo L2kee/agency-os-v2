@@ -3,7 +3,15 @@ import { notFound } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { LeadForm } from "@/components/lead-form";
 import { getLead, listActivities, updateLead, deleteLead, addActivity } from "@/server/leads";
+import { isSendingConfigured, resolveSenderName } from "@/server/sending-accounts";
+import {
+  listTemplates,
+  listActiveSequences,
+  listEnrollmentsForLead,
+  listEmailMessagesForLead,
+} from "@/server/outreach";
 import { StageSelect } from "./stage-select";
+import { EmailPanel } from "./email-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +26,38 @@ export default async function LeadDetailPage({
   const lead = await getLead(id);
   if (!lead) notFound();
 
-  const timeline = await listActivities(id);
+  const [
+    timeline,
+    sendingReady,
+    senderName,
+    templates,
+    sequences,
+    enrollments,
+    emails,
+  ] = await Promise.all([
+    listActivities(id),
+    isSendingConfigured(lead.user_id),
+    resolveSenderName(lead.user_id),
+    listTemplates(),
+    listActiveSequences(),
+    listEnrollmentsForLead(id),
+    listEmailMessagesForLead(id),
+  ]);
+
+  const seqName = new Map(sequences.map((s) => [s.id, s.name]));
+  const activeEnrollments = enrollments
+    .filter((e) => e.status === "active")
+    .map((e) => ({
+      id: e.id,
+      sequenceName: seqName.get(e.sequence_id) ?? "Sequence",
+      currentStep: e.current_step,
+      nextRunAt: e.next_run_at,
+    }));
+
+  // senderName is used elsewhere (Call Mode merge fields in Phase 3); not
+  // rendered directly on this page today, so reference it to avoid an unused
+  // var warning while keeping the fetch centralized.
+  void senderName;
 
   return (
     <div className="mx-auto max-w-4xl p-8">
@@ -49,6 +88,18 @@ export default async function LeadDetailPage({
                 Delete lead
               </button>
             </form>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-white p-6">
+            <h2 className="mb-4 font-semibold">Outreach</h2>
+            <EmailPanel
+              leadId={lead.id}
+              leadHasEmail={Boolean(lead.email)}
+              emailConfigured={sendingReady}
+              templates={templates}
+              sequences={sequences}
+              activeEnrollments={activeEnrollments}
+            />
           </div>
         </div>
 
@@ -93,8 +144,37 @@ export default async function LeadDetailPage({
               {timeline.length === 0 && <li className="text-sm text-slate-400">No activity yet.</li>}
             </ol>
           </div>
+
+          {emails.length > 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <h2 className="mb-4 font-semibold">Emails</h2>
+              <ol className="space-y-3">
+                {emails.map((m) => (
+                  <li key={m.id} className="text-sm">
+                    <div className="flex items-center gap-2">
+                      <StatusDot status={m.status} />
+                      <span className="font-medium">{m.subject}</span>
+                    </div>
+                    <div className="text-xs text-slate-400">
+                      {m.status}
+                      {m.opened_at ? " · opened" : ""}
+                      {" · "}
+                      {formatDistanceToNow(new Date(m.created_at), { addSuffix: true })}
+                    </div>
+                    {m.error && <p className="text-xs text-rose-600">{m.error}</p>}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
+}
+
+function StatusDot({ status }: { status: string }) {
+  const color =
+    status === "sent" ? "bg-emerald-500" : status === "failed" ? "bg-rose-500" : "bg-slate-300";
+  return <span className={`h-2 w-2 rounded-full ${color}`} />;
 }

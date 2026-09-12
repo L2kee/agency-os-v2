@@ -26,7 +26,17 @@ export async function moveLeadToStage(id: string, stage: StageId, sortOrder?: nu
     body: `Moved to ${stageLabel(stage)}`,
   });
 
+  // A won or lost deal shouldn't keep receiving follow-up sequence emails.
+  if (stage === "won" || stage === "lost") {
+    await supabase
+      .from("sequence_enrollments")
+      .update({ status: "stopped", next_run_at: null })
+      .eq("lead_id", id)
+      .eq("status", "active");
+  }
+
   revalidatePath("/pipeline");
   revalidatePath(`/leads/${id}`);
+  revalidatePath("/outreach");
   revalidatePath("/");
 }

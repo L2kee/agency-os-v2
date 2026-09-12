@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, KanbanSquare, Users, Search, LogOut } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Users, Search, Send, Mail, Repeat, LogOut } from "lucide-react";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/pipeline", label: "Pipeline", icon: KanbanSquare },
   { href: "/leads", label: "Leads", icon: Users },
   { href: "/prospecting", label: "Prospecting", icon: Search },
+  { href: "/outreach", label: "Outreach", icon: Send },
+  { href: "/sequences", label: "Sequences", icon: Repeat },
+  { href: "/templates", label: "Templates", icon: Mail },
 ];
 
 export function Sidebar({ email }: { email: string }) {

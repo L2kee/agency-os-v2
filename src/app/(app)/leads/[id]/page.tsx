@@ -12,6 +12,7 @@ import {
 } from "@/server/outreach";
 import { StageSelect } from "./stage-select";
 import { EmailPanel } from "./email-panel";
+import { CallPanel } from "./call-panel";
 
 export const dynamic = "force-dynamic";
 
@@ -54,11 +55,6 @@ export default async function LeadDetailPage({
       nextRunAt: e.next_run_at,
     }));
 
-  // senderName is used elsewhere (Call Mode merge fields in Phase 3); not
-  // rendered directly on this page today, so reference it to avoid an unused
-  // var warning while keeping the fetch centralized.
-  void senderName;
-
   return (
     <div className="mx-auto max-w-4xl p-8">
       <Link href="/leads" className="text-sm text-slate-500 underline">
@@ -76,6 +72,10 @@ export default async function LeadDetailPage({
           )}
         </div>
         <StageSelect leadId={lead.id} stage={lead.stage} />
+      </div>
+
+      <div className="mt-4">
+        <CallPanel lead={lead} senderName={senderName} />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">

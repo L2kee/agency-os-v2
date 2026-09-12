@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getDashboardStats } from "@/server/leads";
+import { getFollowUpsDue } from "@/server/calling";
 import { stageLabel } from "@/server/pipeline/stages";
 
 export const dynamic = "force-dynamic";
@@ -8,7 +9,7 @@ const money = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 export default async function DashboardPage() {
-  const stats = await getDashboardStats();
+  const [stats, followUpsDue] = await Promise.all([getDashboardStats(), getFollowUpsDue()]);
 
   return (
     <div className="mx-auto max-w-5xl p-8">
@@ -21,6 +22,27 @@ export default async function DashboardPage() {
         <Stat label="Deals won" value={String(stats.wonCount)} />
         <Stat label="Revenue won" value={money(stats.wonValue)} />
       </div>
+
+      {followUpsDue.length > 0 && (
+        <div className="mt-8 rounded-xl border border-amber-300 bg-amber-50 p-5">
+          <h2 className="font-semibold text-amber-900">Follow-ups due ({followUpsDue.length})</h2>
+          <div className="mt-3 divide-y divide-amber-200">
+            {followUpsDue.map((l) => (
+              <Link
+                key={l.id}
+                href={`/leads/${l.id}`}
+                className="flex items-center justify-between py-2 text-sm text-amber-900 hover:opacity-70"
+              >
+                <span className="font-medium">{l.business_name}</span>
+                <span className="text-xs">
+                  {l.phone ? l.phone + " · " : ""}
+                  {stageLabel(l.stage)}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
         <div className="flex items-center justify-between">

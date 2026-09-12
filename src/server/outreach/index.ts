@@ -165,7 +165,10 @@ export async function deliverEmail(params: {
 
   if (!lead.email) return { ok: false, error: "This lead has no email address." };
 
-  const sender = await resolveSender(userId);
+  // Pass this call's own client through: in the cron processor there's no
+  // logged-in session for resolveSender to fall back to (see the comment on
+  // resolveSender in @/server/sending-accounts).
+  const sender = await resolveSender(userId, supabase);
   if (!sender) {
     return {
       ok: false,

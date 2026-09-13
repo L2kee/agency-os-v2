@@ -6,11 +6,11 @@ import { SetupNotice } from "@/components/setup-notice";
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   if (!hasSupabaseEnv) return <SetupNotice />;
 
-  const { user } = await requireUser();
+  const { user, profile } = await requireUser();
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar email={user.email ?? ""} />
+      <Sidebar email={user.email ?? ""} isAdmin={profile?.role === "admin"} />
       <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );

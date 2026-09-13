@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, KanbanSquare, Users, Search, Send, Mail, Repeat, BookOpen, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, Users, Search, Send, Mail, Repeat, BookOpen, Settings, ShieldCheck, LogOut } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -16,11 +17,11 @@ const NAV = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function Sidebar({ email }: { email: string }) {
+export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex w-56 shrink-0 flex-col border-r border-slate-200 bg-white">
+    <aside className="glass-panel m-3 flex w-56 shrink-0 flex-col rounded-2xl">
       <div className="px-5 py-5 text-lg font-semibold tracking-tight">Agency OS</div>
 
       <nav className="flex-1 space-y-1 px-3">
@@ -42,6 +43,18 @@ export function Sidebar({ email }: { email: string }) {
       </nav>
 
       <div className="border-t border-slate-200 p-3">
+        {isAdmin && (
+          <Link
+            href="/admin"
+            className={`mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+              pathname.startsWith("/admin") ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            <ShieldCheck size={18} />
+            Access
+          </Link>
+        )}
+        <ThemeToggle />
         <div className="truncate px-3 pb-2 text-xs text-slate-400">{email}</div>
         <form action="/auth/signout" method="post">
           <button

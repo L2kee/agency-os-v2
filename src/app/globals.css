@@ -1,11 +1,235 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: toggled by adding/removing `.dark` on <html>,
+   controlled by ThemeToggle + the anti-flash script in the root layout. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-accent: #22d3ee;
+  --color-accent-2: #818cf8;
 }
 
 html,
 body {
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+@layer base {
+  /* Smooth, cheap theme-swap — color/border/shadow only, never layout. */
+  *,
+  *::before,
+  *::after {
+    transition: background-color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, color 150ms ease;
+  }
+
+  body {
+    position: relative;
+    overflow-x: hidden;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 45%, #f1f5f9 100%);
+  }
+
+  /* Ambient glow blobs behind everything — the "futuristic" depth cue.
+     Fixed + blurred + low-opacity so they read as light, not noise. */
+  body::before,
+  body::after {
+    content: "";
+    position: fixed;
+    z-index: -1;
+    width: 40rem;
+    height: 40rem;
+    border-radius: 9999px;
+    filter: blur(110px);
+    pointer-events: none;
+  }
+  body::before {
+    top: -10rem;
+    left: -10rem;
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.16), transparent 70%);
+  }
+  body::after {
+    bottom: -14rem;
+    right: -10rem;
+    background: radial-gradient(circle, rgba(129, 140, 248, 0.14), transparent 70%);
+  }
+
+  .dark body {
+    background: linear-gradient(180deg, #020617 0%, #0b1220 45%, #020617 100%);
+  }
+  .dark body::before {
+    background: radial-gradient(circle, rgba(34, 211, 238, 0.22), transparent 70%);
+  }
+  .dark body::after {
+    background: radial-gradient(circle, rgba(129, 140, 248, 0.2), transparent 70%);
+  }
+}
+
+/* ---- Shared glass/glow surfaces for new components (Appearance, etc). ---- */
+@layer components {
+  .glass-card {
+    background-color: rgb(255 255 255 / 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgb(226 232 240 / 0.8);
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 16px 40px -20px rgba(34, 211, 238, 0.35);
+  }
+  .dark .glass-card {
+    background-color: rgb(15 23 42 / 0.45);
+    border-color: rgb(255 255 255 / 0.08);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 24px 48px -24px rgba(0, 0, 0, 0.65),
+      0 0 48px -24px rgba(34, 211, 238, 0.3);
+  }
+
+  .glass-panel {
+    background-color: rgb(255 255 255 / 0.6);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgb(226 232 240 / 0.7);
+  }
+  .dark .glass-panel {
+    background-color: rgb(2 6 23 / 0.55);
+    border-color: rgb(255 255 255 / 0.08);
+  }
+
+  .glow-ring:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.18);
+  }
+  .dark .glow-ring:focus {
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.28);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Dark-mode retrofit for every existing screen.
+
+   The whole app was built with a fixed set of literal Tailwind slate/white
+   utility classes (bg-white, text-slate-700, border-slate-200, ...). Rather
+   than touching every page, every one of those exact classes is remapped
+   here under `.dark`, so flipping the theme covers the entire app from one
+   file. New components should prefer .glass-card / .glass-panel above
+   instead of raw slate classes, but the overrides below keep everything
+   already built working automatically.
+   --------------------------------------------------------------------- */
+@layer utilities {
+  /* Every plain white card/panel across the app becomes a frosted glass
+     surface with a soft glow, in both themes — not just dark. */
+  .bg-white {
+    background-color: rgb(255 255 255 / 0.7);
+    backdrop-filter: blur(20px);
+    box-shadow:
+      0 1px 2px rgba(15, 23, 42, 0.04),
+      0 16px 40px -22px rgba(34, 211, 238, 0.35);
+  }
+  .dark .bg-white {
+    background-color: rgb(15 23 42 / 0.5);
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.04) inset,
+      0 24px 48px -24px rgba(0, 0, 0, 0.65),
+      0 0 48px -26px rgba(34, 211, 238, 0.3);
+  }
+  .dark .hover\:bg-white:hover {
+    background-color: rgb(255 255 255 / 0.08);
+  }
+
+  .dark .bg-slate-50 {
+    background-color: #020617;
+  }
+  .dark .bg-slate-100 {
+    background-color: rgb(255 255 255 / 0.06);
+  }
+  .dark .bg-slate-100\/40 {
+    background-color: rgb(255 255 255 / 0.04);
+  }
+  .dark .bg-slate-300 {
+    background-color: rgb(255 255 255 / 0.2);
+  }
+  .dark .bg-slate-900\/30 {
+    background-color: rgb(2 6 23 / 0.6);
+  }
+  .dark .hover\:bg-slate-50:hover {
+    background-color: rgb(255 255 255 / 0.06);
+  }
+  .dark .hover\:bg-slate-100:hover {
+    background-color: rgb(255 255 255 / 0.08);
+  }
+  .dark .hover\:bg-slate-200:hover {
+    background-color: rgb(255 255 255 / 0.12);
+  }
+
+  /* Primary buttons + active pills (bg-slate-900 + text-white) become the
+     accent glow, in both themes — the one spot every screen gets a real
+     "futuristic" pop. */
+  .bg-slate-900 {
+    background-image: linear-gradient(135deg, var(--color-accent), var(--color-accent-2));
+    box-shadow: 0 8px 24px -10px rgba(34, 211, 238, 0.55);
+  }
+  .dark .bg-slate-900 {
+    box-shadow: 0 0 24px -6px rgba(34, 211, 238, 0.65);
+  }
+  .bg-slate-900.hover\:bg-slate-800:hover {
+    background-color: transparent;
+    filter: brightness(1.06);
+    box-shadow: 0 10px 28px -8px rgba(34, 211, 238, 0.7);
+  }
+  .dark .bg-slate-900.hover\:bg-slate-800:hover {
+    box-shadow: 0 0 32px -4px rgba(34, 211, 238, 0.85);
+  }
+  /* Scoped to elements that are ALSO bg-slate-900 (every current usage) so
+     the one unrelated text-white button (call-panel's emerald "start call")
+     keeps real white text instead of going dark-on-dark. */
+  .bg-slate-900.text-white {
+    color: #051018;
+  }
+
+  .dark .border-slate-100 {
+    border-color: rgb(255 255 255 / 0.06);
+  }
+  .dark .border-slate-200 {
+    border-color: rgb(255 255 255 / 0.1);
+  }
+  .dark .border-slate-300 {
+    border-color: rgb(255 255 255 / 0.16);
+  }
+  .dark .border-slate-400 {
+    border-color: rgb(255 255 255 / 0.24);
+  }
+  .dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+    border-color: rgb(255 255 255 / 0.06);
+  }
+
+  .dark .text-slate-900 {
+    color: #f8fafc;
+  }
+  .dark .text-slate-800 {
+    color: #e2e8f0;
+  }
+  .dark .text-slate-700 {
+    color: #cbd5e1;
+  }
+  .dark .text-slate-600 {
+    color: #cbd5e1;
+  }
+  .dark .text-slate-500 {
+    color: #94a3b8;
+  }
+  .dark .text-slate-400 {
+    color: #64748b;
+  }
+  .dark .hover\:text-slate-500:hover,
+  .dark .hover\:text-slate-700:hover,
+  .dark .hover\:text-slate-900:hover {
+    color: #f1f5f9;
+  }
+
+  .focus\:border-slate-900:focus {
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+  }
+  .dark .focus\:border-slate-900:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.28);
+  }
 }

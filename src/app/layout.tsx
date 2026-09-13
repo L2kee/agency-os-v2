@@ -10,13 +10,21 @@ export const metadata: Metadata = {
   description: "CRM and prospecting for a web-design agency",
 };
 
+// Runs before paint so the correct theme is set with no flash — reads the
+// user's saved choice, or their OS preference if they haven't picked one yet.
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('agencyos-theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full bg-slate-50 text-slate-900">{children}</body>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
+      <body className="min-h-full text-slate-900">{children}</body>
     </html>
   );
 }

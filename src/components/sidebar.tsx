@@ -17,11 +17,19 @@ const NAV = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }) {
+export function Sidebar({
+  email,
+  isAdmin,
+  onNavigate,
+}: {
+  email: string;
+  isAdmin?: boolean;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
 
   return (
-    <aside className="glass-panel m-3 flex w-56 shrink-0 flex-col rounded-2xl">
+    <aside className="glass-panel flex h-full w-56 shrink-0 flex-col rounded-2xl md:m-3">
       <div className="px-5 py-5 text-lg font-semibold tracking-tight">Agency OS</div>
 
       <nav className="flex-1 space-y-1 px-3">
@@ -31,6 +39,7 @@ export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }
             <Link
               key={href}
               href={href}
+              onClick={onNavigate}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
                 active ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
               }`}
@@ -46,6 +55,7 @@ export function Sidebar({ email, isAdmin }: { email: string; isAdmin?: boolean }
         {isAdmin && (
           <Link
             href="/admin"
+            onClick={onNavigate}
             className={`mb-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
               pathname.startsWith("/admin") ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
             }`}

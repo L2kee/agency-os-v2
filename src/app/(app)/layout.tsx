@@ -1,6 +1,6 @@
 import { hasSupabaseEnv } from "@/server/supabase/env";
 import { requireUser } from "@/server/auth";
-import { Sidebar } from "@/components/sidebar";
+import { AppShell } from "@/components/app-shell";
 import { SetupNotice } from "@/components/setup-notice";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -9,9 +9,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { user, profile } = await requireUser();
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar email={user.email ?? ""} isAdmin={profile?.role === "admin"} />
-      <main className="flex-1 overflow-y-auto">{children}</main>
-    </div>
+    <AppShell email={user.email ?? ""} isAdmin={profile?.role === "admin"}>
+      {children}
+    </AppShell>
   );
 }

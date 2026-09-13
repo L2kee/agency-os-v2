@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const [stats, followUpsDue] = await Promise.all([getDashboardStats(), getFollowUpsDue()]);
 
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="mx-auto max-w-5xl p-4 sm:p-8">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
       <p className="mt-1 text-sm text-slate-500">Your web-design agency at a glance.</p>
 

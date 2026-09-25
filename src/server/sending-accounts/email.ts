@@ -13,6 +13,9 @@ const ENV_RESEND_KEY = process.env.RESEND_API_KEY ?? "";
 export const ENV_EMAIL_FROM = process.env.EMAIL_FROM ?? "";
 export const ENV_SENDER_NAME = process.env.SENDER_NAME ?? "";
 export const envEmailConfigured = Boolean(ENV_RESEND_KEY && ENV_EMAIL_FROM);
+// The operator sender lives on mail.evogencyglobal.com, which has no inbox, so
+// replies to env-sender mail are routed to a real mailbox instead.
+const ENV_REPLY_TO = process.env.EMAIL_REPLY_TO || "hello@evogencyglobal.com";
 
 export interface ResolvedSender {
   provider: "resend";
@@ -71,7 +74,7 @@ export async function sendViaResend(
       subject: opts.subject,
       text: opts.text,
       html: opts.trackOpens === false ? undefined : toHtml(opts.text, opts.messageId),
-      replyTo: opts.replyTo || undefined,
+      replyTo: opts.replyTo || (sender.origin === "env" ? ENV_REPLY_TO : undefined),
     });
     if (error) return { ok: false, error: error.message };
     return { ok: true, providerId: data?.id };

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { listLeads } from "@/server/leads";
-import { stageLabel } from "@/server/pipeline/stages";
+import { LeadsTable } from "./leads-table";
 
 export const dynamic = "force-dynamic";
 
@@ -33,77 +33,7 @@ export default async function LeadsPage({
         />
       </form>
 
-      <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-400">
-            <tr>
-              <th className="px-4 py-3 font-medium">Business</th>
-              <th className="px-4 py-3 font-medium">Category</th>
-              <th className="px-4 py-3 font-medium">Stage</th>
-              <th className="px-4 py-3 font-medium">Website</th>
-              <th className="px-4 py-3 text-right font-medium">Value</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {leads.map((l) => (
-              <tr key={l.id} className="hover:bg-slate-50">
-                <td className="px-4 py-3">
-                  <Link href={`/leads/${l.id}`} className="font-medium hover:underline">
-                    {l.business_name}
-                  </Link>
-                  {l.city && (
-                    <span className="ml-2 text-xs text-slate-400">
-                      {l.city}
-                      {l.state ? `, ${l.state}` : ""}
-                    </span>
-                  )}
-                </td>
-                <td className="px-4 py-3 text-slate-500">{l.category ?? "—"}</td>
-                <td className="px-4 py-3 text-slate-500">{stageLabel(l.stage)}</td>
-                <td className="px-4 py-3">
-                  {l.has_website === false ? (
-                    <span className="rounded bg-rose-100 px-1.5 py-0.5 text-xs font-medium text-rose-700">
-                      none
-                    </span>
-                  ) : l.website_quality === "outdated" ? (
-                    <span className="rounded bg-amber-100 px-1.5 py-0.5 text-xs font-medium text-amber-700">
-                      outdated
-                    </span>
-                  ) : l.website ? (
-                    <a
-                      href={l.website}
-                      target="_blank"
-                      className="text-xs text-slate-500 underline"
-                      rel="noreferrer"
-                    >
-                      link
-                    </a>
-                  ) : (
-                    "—"
-                  )}
-                </td>
-                <td className="px-4 py-3 text-right tabular-nums text-slate-600">
-                  {(l.deal_value ?? 0).toLocaleString("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                    maximumFractionDigits: 0,
-                  })}
-                </td>
-              </tr>
-            ))}
-            {leads.length === 0 && (
-              <tr>
-                <td colSpan={5} className="px-4 py-10 text-center text-slate-400">
-                  No leads yet.{" "}
-                  <Link href="/leads/new" className="underline">
-                    Add one
-                  </Link>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <LeadsTable leads={leads} />
     </div>
   );
 }

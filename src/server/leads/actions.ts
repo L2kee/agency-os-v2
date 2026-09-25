@@ -82,6 +82,25 @@ export async function deleteLead(id: string) {
   redirect("/leads");
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const MAX_BULK_DELETE = 500;
+
+// Bulk delete from the Leads table. RLS scopes the delete to the caller's own
+// leads, so foreign ids are silently skipped; `deleted` reports what actually went.
+export async function deleteLeads(ids: string[]): Promise<{ deleted?: number; error?: string }> {
+  const { supabase } = await requireUser();
+  const clean = [...new Set(ids)].filter((id) => UUID_RE.test(id));
+  if (clean.length === 0) return { error: "No leads selected." };
+  if (clean.length > MAX_BULK_DELETE) return { error: `You can delete up to ${MAX_BULK_DELETE} leads at once.` };
+
+  const { data, error } = await supabase.from("leads").delete().in("id", clean).select("id");
+  if (error) return { error: error.message };
+
+  revalidatePath("/leads");
+  revalidatePath("/pipeline");
+  return { deleted: data?.length ?? 0 };
+}
+
 export async function addActivity(leadId: string, formData: FormData) {
   const { supabase, user } = await requireUser();
   const body = str(formData.get("body"));

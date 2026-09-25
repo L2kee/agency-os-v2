@@ -98,4 +98,4 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 // `import { createLead, listLeads } from "@/server/leads"` uniformly. Client
 // Components must import actions directly from "@/server/leads/actions" —
 // see the comment above.
-export { createLead, updateLead, deleteLead, addActivity } from "./actions";
+export { createLead, updateLead, deleteLead, deleteLeads, addActivity } from "./actions";

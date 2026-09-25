@@ -2,7 +2,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { LeadForm } from "@/components/lead-form";
-import { getLead, listActivities, updateLead, deleteLead, addActivity } from "@/server/leads";
+import { getLead, listActivities, updateLead, addActivity } from "@/server/leads";
+import { DeleteLeadButton } from "./delete-lead-button";
 import { isSendingConfigured, resolveSenderName } from "@/server/sending-accounts";
 import {
   listTemplates,
@@ -83,11 +84,9 @@ export default async function LeadDetailPage({
           <div className="rounded-xl border border-slate-200 bg-white p-6">
             <h2 className="mb-4 font-semibold">Details</h2>
             <LeadForm action={updateLead.bind(null, lead.id)} lead={lead} submitLabel="Save changes" />
-            <form action={deleteLead.bind(null, lead.id)} className="mt-6 border-t border-slate-100 pt-4">
-              <button className="text-sm text-rose-600 underline hover:text-rose-800">
-                Delete lead
-              </button>
-            </form>
+            <div className="mt-6 border-t border-slate-100 pt-4">
+              <DeleteLeadButton leadId={lead.id} />
+            </div>
           </div>
 
           <div className="rounded-xl border border-slate-200 bg-white p-6">

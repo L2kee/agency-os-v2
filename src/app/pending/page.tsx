@@ -7,7 +7,7 @@ export default function PendingPage() {
           Your account isn&rsquo;t active on this workspace. If you think this is a
           mistake, contact the person who invited you.
         </p>
-        <form action="/auth/signout" method="post" className="mt-5">
+        <form action="/agency-os/auth/signout" method="post" className="mt-5">
           <button className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-50">
             Sign out
           </button>

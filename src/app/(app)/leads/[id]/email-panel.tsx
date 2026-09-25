@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import type { EmailTemplate } from "@/server/outreach/types";
 import {
   sendLeadEmailNow,
@@ -131,9 +132,9 @@ export function EmailPanel({
         {!emailConfigured && (
           <p className="mt-2 rounded-lg bg-amber-50 p-2 text-xs text-amber-700">
             Email sending isn&rsquo;t set up yet —{" "}
-            <a href="/settings" className="underline">
+            <Link href="/settings" className="underline">
               connect your email provider in Settings
-            </a>
+            </Link>
             .
           </p>
         )}

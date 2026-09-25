@@ -66,7 +66,7 @@ export function Sidebar({
         )}
         <ThemeToggle />
         <div className="truncate px-3 pb-2 text-xs text-slate-400">{email}</div>
-        <form action="/auth/signout" method="post">
+        <form action="/agency-os/auth/signout" method="post">
           <button
             type="submit"
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"

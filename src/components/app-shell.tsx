@@ -6,10 +6,12 @@ import { Sidebar } from "@/components/sidebar";
 
 export function AppShell({
   email,
+  orgName,
   isAdmin,
   children,
 }: {
   email: string;
+  orgName: string;
   isAdmin?: boolean;
   children: React.ReactNode;
 }) {
@@ -30,7 +32,7 @@ export function AppShell({
           open ? "translate-x-0" : "-translate-x-[110%]"
         }`}
       >
-        <Sidebar email={email} isAdmin={isAdmin} onNavigate={() => setOpen(false)} />
+        <Sidebar email={email} orgName={orgName} isAdmin={isAdmin} onNavigate={() => setOpen(false)} />
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col">

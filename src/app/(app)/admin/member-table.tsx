@@ -60,6 +60,9 @@ export function MemberTable({
                     )}
                   </td>
                   <td className="px-4 py-3">
+                    {r.role === "owner" ? (
+                      <span className="text-sm text-slate-600">Owner</span>
+                    ) : (
                     <select
                       value={r.role}
                       disabled={isSelf || pending}
@@ -71,9 +74,10 @@ export function MemberTable({
                       <option value="member">Member</option>
                       <option value="admin">Admin</option>
                     </select>
+                    )}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    {!isSelf && (
+                    {!isSelf && r.role !== "owner" && (
                       <div className="flex justify-end gap-3">
                         <button
                           onClick={() => run(() => setMemberActive(r.id, !r.isActive))}
@@ -83,7 +87,7 @@ export function MemberTable({
                         </button>
                         <button
                           onClick={() => {
-                            if (confirm(`Remove ${r.email} and delete all their data?`))
+                            if (confirm(`Remove ${r.email}? Their leads, deals, and customers move to you.`))
                               run(() => removeMember(r.id));
                           }}
                           className="text-xs text-rose-600 underline hover:text-rose-800"

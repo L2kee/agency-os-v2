@@ -1,41 +1,44 @@
 import "server-only";
 
 import { createAdminClient, hasAdminClient } from "@/server/supabase/admin";
-import type { MemberRow } from "./types";
+import type { MemberRow, OrgRole } from "./types";
 
-// Combines auth.users (for invite/last-seen status) with the profiles table
-// (for role/active) into the rows the Access page renders. Needs the
-// service-role client since listing every user isn't something a normal
-// session can do.
-export async function listMembers(): Promise<MemberRow[]> {
-  if (!hasAdminClient) return [];
+// The rows the Access page renders: one organization's members, with invite
+// and last seen status from auth.users. Needs the service role client,
+// because reading auth users isn't something a normal session can do.
+export async function listMembers(orgId: string): Promise<MemberRow[]> {
+  if (!hasAdminClient) {
+    return [];
+  }
 
   const admin = createAdminClient();
-  const [{ data: list }, { data: profiles }] = await Promise.all([
-    admin.auth.admin.listUsers({ perPage: 200 }),
-    admin.from("profiles").select("id, email, role, is_active, created_at"),
+  const [{ data: list }, { data: members }] = await Promise.all([
+    admin.auth.admin.listUsers({ perPage: 1000 }),
+    admin
+      .from("organization_members")
+      .select("user_id, role, is_active, created_at")
+      .eq("organization_id", orgId),
   ]);
 
-  const pmap = new Map((profiles ?? []).map((p) => [p.id, p]));
-  const rows = (list?.users ?? []).map((u) => {
-    const p = pmap.get(u.id);
+  const users = new Map((list?.users ?? []).map((authUser) => [authUser.id, authUser]));
+  const rows = (members ?? []).map((member) => {
+    const authUser = users.get(member.user_id);
     return {
-      id: u.id,
-      email: u.email ?? p?.email ?? "—",
-      role: (p?.role ?? "member") as MemberRow["role"],
-      isActive: p?.is_active ?? true,
-      invitedNotAccepted: Boolean(u.invited_at) && !u.last_sign_in_at,
-      lastSignIn: u.last_sign_in_at ?? null,
-      createdAt: u.created_at,
+      id: member.user_id,
+      email: authUser?.email ?? "Unknown",
+      role: member.role as OrgRole,
+      isActive: member.is_active,
+      invitedNotAccepted: Boolean(authUser?.invited_at) && !authUser?.last_sign_in_at,
+      lastSignIn: authUser?.last_sign_in_at ?? null,
+      createdAt: member.created_at,
     };
   });
   rows.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   return rows;
 }
 
-export type { Profile, MemberRow } from "./types";
+export type { Profile, MemberRow, OrgContext, OrgRole } from "./types";
 
-// Re-exported so Server Components can do
-// `import { inviteMember, setMemberActive, setMemberRole, removeMember } from "@/server/access"` uniformly.
+// Re-exported so Server Components can import everything from "@/server/access".
 // Client Components must import actions directly from "@/server/access/actions".
 export { inviteMember, setMemberActive, setMemberRole, removeMember } from "./actions";

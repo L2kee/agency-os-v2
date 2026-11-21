@@ -2,13 +2,31 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, KanbanSquare, Users, Search, Send, Mail, Repeat, BookOpen, Settings, ShieldCheck, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  KanbanSquare,
+  Users,
+  Handshake,
+  Building2,
+  Package,
+  Search,
+  Send,
+  Mail,
+  Repeat,
+  BookOpen,
+  Settings,
+  ShieldCheck,
+  LogOut,
+} from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
   { href: "/pipeline", label: "Pipeline", icon: KanbanSquare },
   { href: "/leads", label: "Leads", icon: Users },
+  { href: "/deals", label: "Deals", icon: Handshake },
+  { href: "/customers", label: "Customers", icon: Building2 },
+  { href: "/catalog", label: "Catalog", icon: Package },
   { href: "/prospecting", label: "Prospecting", icon: Search },
   { href: "/outreach", label: "Outreach", icon: Send },
   { href: "/sequences", label: "Sequences", icon: Repeat },
@@ -19,10 +37,12 @@ const NAV = [
 
 export function Sidebar({
   email,
+  orgName,
   isAdmin,
   onNavigate,
 }: {
   email: string;
+  orgName: string;
   isAdmin?: boolean;
   onNavigate?: () => void;
 }) {
@@ -30,7 +50,10 @@ export function Sidebar({
 
   return (
     <aside className="glass-panel flex h-full w-56 shrink-0 flex-col rounded-2xl md:m-3">
-      <div className="px-5 py-5 text-lg font-semibold tracking-tight">Agency OS</div>
+      <div className="px-5 py-5">
+        <div className="text-lg font-semibold tracking-tight">Agency OS</div>
+        <div className="truncate text-xs text-slate-500">{orgName}</div>
+      </div>
 
       <nav className="flex-1 space-y-1 px-3">
         {NAV.map(({ href, label, icon: Icon }) => {

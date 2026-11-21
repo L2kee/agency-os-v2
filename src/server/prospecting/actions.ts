@@ -91,7 +91,8 @@ export async function searchPlaces(formData: FormData): Promise<SearchResult> {
  * is a PARTIAL unique index (WHERE place_id IS NOT NULL), which Postgres/
  * PostgREST cannot use for ON CONFLICT inference (error 42P10), so every
  * import would silently insert zero rows. Instead: look up the place_ids
- * this user already has, filter them out, and plain-insert the rest.
+ * the organization already has (row security scopes the read), filter them
+ * out, and plain-insert the rest.
  * (Same bug + fix as the original agency-os app's commit be9fd00.)
  */
 export async function importProspects(prospects: Prospect[]): Promise<ImportResult> {
@@ -102,7 +103,6 @@ export async function importProspects(prospects: Prospect[]): Promise<ImportResu
   const { data: existing } = await supabase
     .from("leads")
     .select("place_id")
-    .eq("user_id", user.id)
     .in("place_id", placeIds);
 
   const alreadyHave = new Set((existing ?? []).map((r) => r.place_id));

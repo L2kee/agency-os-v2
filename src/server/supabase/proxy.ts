@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { SUPABASE_ANON_KEY, SUPABASE_URL, hasSupabaseEnv } from "./env";
 
-const PUBLIC_PATHS = ["/login", "/auth", "/api/track", "/api/cron"];
+const PUBLIC_PATHS = ["/login", "/auth", "/api/track", "/api/cron", "/api/stripe"];
 
 /** Refresh the Supabase session cookie and gate unauthenticated access. */
 export async function updateSession(request: NextRequest) {

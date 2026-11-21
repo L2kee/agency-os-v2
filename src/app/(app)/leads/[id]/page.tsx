@@ -14,6 +14,11 @@ import {
 import { StageSelect } from "./stage-select";
 import { EmailPanel } from "./email-panel";
 import { CallPanel } from "./call-panel";
+import { createDeal, dealTotals, listDealsFor } from "@/server/deals";
+import { convertLead } from "@/server/customers";
+import { requireUser } from "@/server/auth";
+import { summarizeTotals } from "@/lib/money";
+import { pill } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +41,8 @@ export default async function LeadDetailPage({
     sequences,
     enrollments,
     emails,
+    deals,
+    { org },
   ] = await Promise.all([
     listActivities(id),
     isSendingConfigured(lead.user_id),
@@ -44,6 +51,8 @@ export default async function LeadDetailPage({
     listActiveSequences(),
     listEnrollmentsForLead(id),
     listEmailMessagesForLead(id),
+    listDealsFor({ leadId: id }),
+    requireUser(),
   ]);
 
   const seqName = new Map(sequences.map((s) => [s.id, s.name]));
@@ -103,6 +112,57 @@ export default async function LeadDetailPage({
         </div>
 
         <div className="space-y-6">
+          <div className="rounded-xl border border-slate-200 bg-white p-6">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="font-semibold">Deals</h2>
+              <form action={createDeal}>
+                <input type="hidden" name="lead_id" value={lead.id} />
+                <button className="rounded-lg bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-800">
+                  New deal
+                </button>
+              </form>
+            </div>
+            {deals.length === 0 ? (
+              <p className="mt-3 text-sm text-slate-400">
+                No deals yet. Start one to quote from your catalog and send a payment link.
+              </p>
+            ) : (
+              <ul className="mt-3 divide-y divide-slate-100">
+                {deals.map((deal) => (
+                  <li key={deal.id}>
+                    <Link
+                      href={`/deals/${deal.id}`}
+                      className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm hover:text-slate-500"
+                    >
+                      <span>
+                        <span className="text-slate-400">#{deal.number}</span> {deal.title}
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <span className="font-semibold tabular-nums">
+                          {summarizeTotals(dealTotals(deal), org.currency)}
+                        </span>
+                        <span className={pill(deal.status)}>{deal.status}</span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="mt-4 border-t border-slate-100 pt-3 text-sm">
+              {lead.customer_id ? (
+                <Link href={`/customers/${lead.customer_id}`} className="text-slate-600 underline">
+                  Open customer record
+                </Link>
+              ) : (
+                <form action={convertLead.bind(null, lead.id)}>
+                  <button className="text-slate-600 underline hover:text-slate-900">
+                    Convert to customer
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
+
           <div className="rounded-xl border border-slate-200 bg-white p-6">
             <h2 className="mb-4 font-semibold">Activity</h2>
 

@@ -21,11 +21,14 @@ export interface Lead {
   website_quality: "none" | "outdated" | "ok" | null;
   notes: string | null;
   next_follow_up_at: string | null;
+  customer_id: string | null;
+  contact_id: string | null;
+  converted_at: string | null;
   created_at: string;
   updated_at: string;
 }
 
-export type ActivityType = "note" | "call" | "email" | "meeting" | "stage_change";
+export type ActivityType = "note" | "call" | "email" | "meeting" | "stage_change" | "deal";
 
 export interface Activity {
   id: string;

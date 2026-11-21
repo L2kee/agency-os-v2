@@ -2,6 +2,9 @@ import Link from "next/link";
 import { getDashboardStats } from "@/server/leads";
 import { getFollowUpsDue } from "@/server/calling";
 import { stageLabel } from "@/server/pipeline/stages";
+import { getSalesStats } from "@/server/deals";
+import { requireUser } from "@/server/auth";
+import { formatMoney, summarizeTotals } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
 
@@ -9,18 +12,30 @@ const money = (n: number) =>
   n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 export default async function DashboardPage() {
-  const [stats, followUpsDue] = await Promise.all([getDashboardStats(), getFollowUpsDue()]);
+  const [stats, followUpsDue, sales, { org }] = await Promise.all([
+    getDashboardStats(),
+    getFollowUpsDue(),
+    getSalesStats(),
+    requireUser(),
+  ]);
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-8">
       <h1 className="text-2xl font-semibold">Dashboard</h1>
-      <p className="mt-1 text-sm text-slate-500">Your web-design agency at a glance.</p>
+      <p className="mt-1 text-sm text-slate-500">{org.name} at a glance.</p>
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Stat label="Open leads" value={String(stats.openCount)} />
         <Stat label="Pipeline value" value={money(stats.pipelineValue)} />
         <Stat label="Deals won" value={String(stats.wonCount)} />
         <Stat label="Revenue won" value={money(stats.wonValue)} />
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <Stat label="Open deals" value={String(sales.openCount)} />
+        <Stat label="Open deal value" value={summarizeTotals(sales.open, org.currency)} />
+        <Stat label="Won, one time" value={formatMoney(sales.won.oneTimeCents, org.currency)} />
+        <Stat label="Won, monthly" value={formatMoney(sales.won.monthlyCents, org.currency)} />
       </div>
 
       {followUpsDue.length > 0 && (

@@ -7,15 +7,15 @@ import { InviteForm } from "./invite-form";
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const { user } = await requireAdmin();
-  const rows = await listMembers();
+  const { user, org } = await requireAdmin();
+  const rows = await listMembers(org.id);
 
   return (
     <div className="mx-auto max-w-4xl p-8">
       <h1 className="text-2xl font-semibold">Access</h1>
       <p className="mt-1 text-sm text-slate-500">
-        Only people you invite here can use the app. Deactivate anyone to cut off
-        access immediately.
+        Only people you invite here can use {org.name}&rsquo;s workspace. Deactivate
+        anyone to cut off access immediately.
       </p>
 
       {!hasAdminClient && (

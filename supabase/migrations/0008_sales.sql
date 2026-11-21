@@ -455,6 +455,7 @@ revoke execute on function public.mark_deal_won(uuid, bigint, text) from public,
 grant execute on function public.convert_lead(uuid) to authenticated, service_role;
 grant execute on function public.mark_deal_won(uuid, bigint, text) to authenticated, service_role;
 revoke execute on function public.assign_deal_number() from public, anon, authenticated;
+revoke execute on function public.refresh_deal_totals() from public, anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- Row security

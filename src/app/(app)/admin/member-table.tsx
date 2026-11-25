@@ -26,12 +26,14 @@ export function MemberTable({
   return (
     <div>
       {err && <p className="mb-2 text-sm text-rose-600">{err}</p>}
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      {/* On phones Status moves under the email and the box scrolls sideways as a
+          fallback, so Role and Remove are always reachable. */}
+      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-400">
             <tr>
               <th className="px-4 py-3 font-medium">Person</th>
-              <th className="px-4 py-3 font-medium">Status</th>
+              <th className="hidden px-4 py-3 font-medium sm:table-cell">Status</th>
               <th className="px-4 py-3 font-medium">Role</th>
               <th className="px-4 py-3 font-medium"></th>
             </tr>
@@ -42,22 +44,19 @@ export function MemberTable({
               return (
                 <tr key={r.id} className={pending ? "opacity-60" : ""}>
                   <td className="px-4 py-3">
-                    <div className="font-medium">{r.email}</div>
+                    <div className="break-all font-medium">{r.email}</div>
                     <div className="text-xs text-slate-400">
                       {r.lastSignIn
                         ? `last seen ${formatDistanceToNow(new Date(r.lastSignIn), { addSuffix: true })}`
                         : `added ${formatDistanceToNow(new Date(r.createdAt), { addSuffix: true })}`}
                       {isSelf && " · you"}
                     </div>
+                    <div className="mt-1 sm:hidden">
+                      <StatusBadge r={r} />
+                    </div>
                   </td>
-                  <td className="px-4 py-3">
-                    {!r.isActive ? (
-                      <Badge tone="rose">deactivated</Badge>
-                    ) : r.invitedNotAccepted ? (
-                      <Badge tone="amber">invite sent</Badge>
-                    ) : (
-                      <Badge tone="emerald">active</Badge>
-                    )}
+                  <td className="hidden px-4 py-3 sm:table-cell">
+                    <StatusBadge r={r} />
                   </td>
                   <td className="px-4 py-3">
                     {r.role === "owner" ? (
@@ -78,7 +77,7 @@ export function MemberTable({
                   </td>
                   <td className="px-4 py-3 text-right">
                     {!isSelf && r.role !== "owner" && (
-                      <div className="flex justify-end gap-3">
+                      <div className="flex flex-col items-end gap-2 sm:flex-row sm:justify-end sm:gap-3">
                         <button
                           onClick={() => run(() => setMemberActive(r.id, !r.isActive))}
                           className="text-xs text-slate-500 underline hover:text-slate-900"
@@ -114,4 +113,10 @@ function Badge({ tone, children }: { tone: "rose" | "amber" | "emerald"; childre
     emerald: "bg-emerald-100 text-emerald-700",
   }[tone];
   return <span className={`rounded px-1.5 py-0.5 text-xs font-medium ${cls}`}>{children}</span>;
+}
+
+function StatusBadge({ r }: { r: MemberRow }) {
+  if (!r.isActive) return <Badge tone="rose">deactivated</Badge>;
+  if (r.invitedNotAccepted) return <Badge tone="amber">invite sent</Badge>;
+  return <Badge tone="emerald">active</Badge>;
 }

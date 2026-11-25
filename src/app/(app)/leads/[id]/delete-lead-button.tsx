@@ -13,7 +13,7 @@ export function DeleteLeadButton({ leadId }: { leadId: string }) {
     return (
       <button
         onClick={() => setConfirming(true)}
-        className="text-sm text-rose-600 underline hover:text-rose-800"
+        className="inline-flex min-h-11 items-center sm:min-h-0 text-sm text-rose-600 underline hover:text-rose-800"
       >
         Delete lead
       </button>

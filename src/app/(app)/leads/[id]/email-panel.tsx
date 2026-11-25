@@ -119,7 +119,7 @@ export function EmailPanel({
 
         <button
           onClick={() => startSeq(() => markLeadReplied(leadId).then(() => {}))}
-          className="mt-2 text-xs text-slate-500 underline hover:text-slate-900"
+          className="mt-2 inline-flex min-h-11 items-center sm:min-h-0 text-xs text-slate-500 underline hover:text-slate-900"
         >
           Mark as replied (stops all sequences)
         </button>

@@ -66,8 +66,8 @@ export default async function LeadDetailPage({
     }));
 
   return (
-    <div className="mx-auto max-w-4xl p-8">
-      <Link href="/leads" className="text-sm text-slate-500 underline">
+    <div className="mx-auto max-w-4xl p-4 sm:p-8">
+      <Link href="/leads" className="inline-flex min-h-11 items-center sm:min-h-0 text-sm text-slate-500 underline">
         ← Leads
       </Link>
 
@@ -150,12 +150,12 @@ export default async function LeadDetailPage({
             )}
             <div className="mt-4 border-t border-slate-100 pt-3 text-sm">
               {lead.customer_id ? (
-                <Link href={`/customers/${lead.customer_id}`} className="text-slate-600 underline">
+                <Link href={`/customers/${lead.customer_id}`} className="inline-flex min-h-11 items-center sm:min-h-0 text-slate-600 underline">
                   Open customer record
                 </Link>
               ) : (
                 <form action={convertLead.bind(null, lead.id)}>
-                  <button className="text-slate-600 underline hover:text-slate-900">
+                  <button className="inline-flex min-h-11 items-center sm:min-h-0 text-slate-600 underline hover:text-slate-900">
                     Convert to customer
                   </button>
                 </form>

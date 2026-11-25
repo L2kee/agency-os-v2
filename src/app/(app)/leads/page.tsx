@@ -13,7 +13,7 @@ export default async function LeadsPage({
   const leads = await listLeads(q);
 
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="mx-auto max-w-5xl p-4 sm:p-8">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Leads</h1>
         <Link

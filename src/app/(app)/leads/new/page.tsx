@@ -4,7 +4,7 @@ import { createLead } from "@/server/leads";
 
 export default function NewLeadPage() {
   return (
-    <div className="mx-auto max-w-3xl p-8">
+    <div className="mx-auto max-w-3xl p-4 sm:p-8">
       <Link href="/leads" className="text-sm text-slate-500 underline">
         ← Leads
       </Link>

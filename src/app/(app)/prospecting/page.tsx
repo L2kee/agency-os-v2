@@ -2,7 +2,7 @@ import { ProspectSearch } from "./prospect-search";
 
 export default function ProspectingPage() {
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="mx-auto max-w-5xl p-4 sm:p-8">
       <h1 className="text-2xl font-semibold">Prospecting</h1>
       <p className="mt-1 text-sm text-slate-500">
         Find local businesses by type and location. Businesses with no website are

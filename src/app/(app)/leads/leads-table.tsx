@@ -113,7 +113,9 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
       {err && <p className="mb-2 text-sm text-rose-600">{err}</p>}
       {msg && count === 0 && <p className="mb-2 text-sm text-emerald-600">{msg}</p>}
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+      {/* On phones Category and Website hide (category shows under the name)
+          and the box scrolls sideways as a fallback, so no column is ever cut off. */}
+      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-sm">
           <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-400">
             <tr>
@@ -129,9 +131,9 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                 />
               </th>
               <th className="px-4 py-3 font-medium">Business</th>
-              <th className="px-4 py-3 font-medium">Category</th>
+              <th className="hidden px-4 py-3 font-medium sm:table-cell">Category</th>
               <th className="px-4 py-3 font-medium">Stage</th>
-              <th className="px-4 py-3 font-medium">Website</th>
+              <th className="hidden px-4 py-3 font-medium sm:table-cell">Website</th>
               <th className="px-4 py-3 text-right font-medium">Value</th>
             </tr>
           </thead>
@@ -163,10 +165,13 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                       {l.state ? `, ${l.state}` : ""}
                     </span>
                   )}
+                  {l.category && (
+                    <div className="mt-0.5 text-xs text-slate-400 sm:hidden">{l.category}</div>
+                  )}
                 </td>
-                <td className="px-4 py-3 text-slate-500">{l.category ?? "—"}</td>
+                <td className="hidden px-4 py-3 text-slate-500 sm:table-cell">{l.category ?? "—"}</td>
                 <td className="px-4 py-3 text-slate-500">{stageLabel(l.stage)}</td>
-                <td className="px-4 py-3">
+                <td className="hidden px-4 py-3 sm:table-cell">
                   {l.has_website === false ? (
                     <span className="rounded bg-rose-100 px-1.5 py-0.5 text-xs font-medium text-rose-700">
                       none
@@ -188,7 +193,7 @@ export function LeadsTable({ leads }: { leads: Lead[] }) {
                     "—"
                   )}
                 </td>
-                <td className="px-4 py-3 text-right tabular-nums text-slate-600">
+                <td className="whitespace-nowrap px-4 py-3 text-right tabular-nums text-slate-600">
                   {(l.deal_value ?? 0).toLocaleString("en-US", {
                     style: "currency",
                     currency: "USD",

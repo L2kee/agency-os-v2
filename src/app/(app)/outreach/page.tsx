@@ -11,7 +11,7 @@ export default async function OutreachPage() {
   const { due, upcoming, recentEmails, sendingReady } = await getOutreachQueueData(user.id);
 
   return (
-    <div className="mx-auto max-w-4xl p-8">
+    <div className="mx-auto max-w-4xl p-4 sm:p-8">
       <h1 className="text-2xl font-semibold">Outreach</h1>
       <p className="mt-1 text-sm text-slate-500">
         Sequence emails waiting to go out. Locally, click the button to send due

@@ -14,7 +14,7 @@ export default async function SequencePage({ params }: { params: Promise<{ id: s
   const steps = await listSequenceSteps(id);
 
   return (
-    <div className="mx-auto max-w-3xl p-8">
+    <div className="mx-auto max-w-3xl p-4 sm:p-8">
       <Link href="/sequences" className="text-sm text-slate-500 underline">
         ← Sequences
       </Link>

@@ -11,7 +11,7 @@ export default async function SequencesPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-3xl p-8">
+    <div className="mx-auto max-w-3xl p-4 sm:p-8">
       <h1 className="text-2xl font-semibold">Sequences</h1>
       <p className="mt-1 text-sm text-slate-500">
         Multi-step follow-up cadences. Enroll leads from their detail page.

@@ -11,7 +11,7 @@ export default async function AdminPage() {
   const rows = await listMembers(org.id);
 
   return (
-    <div className="mx-auto max-w-4xl p-8">
+    <div className="mx-auto max-w-4xl p-4 sm:p-8">
       <h1 className="text-2xl font-semibold">Access</h1>
       <p className="mt-1 text-sm text-slate-500">
         Only people you invite here can use {org.name}&rsquo;s workspace. Deactivate

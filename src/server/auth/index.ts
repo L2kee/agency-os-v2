@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/server/supabase/server";
 import { hasSupabaseEnv } from "@/server/supabase/env";
 import type { OrgContext, OrgRole, Profile } from "@/server/access/types";
+import { retryOnClockSkew } from "@/server/auth/retry";
 
 interface MembershipRow {
   role: OrgRole;
@@ -42,20 +43,25 @@ export const requireUser = cache(async function requireUser() {
     redirect("/login");
   }
 
-  const [{ data: profile }, { data: memberships, error }] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("id, email, role, is_active, created_at")
-      .eq("id", user.id)
-      .maybeSingle(),
-    supabase
-      .from("organization_members")
-      .select("role, organizations (id, name, industry, currency, is_platform)")
-      .eq("user_id", user.id)
-      .eq("is_active", true)
-      .order("created_at")
-      .limit(1),
-  ]);
+  // Retried once if a freshly refreshed token trips "JWT issued at future".
+  const [{ data: profile }, { data: memberships, error }] = await retryOnClockSkew(
+    () =>
+      Promise.all([
+        supabase
+          .from("profiles")
+          .select("id, email, role, is_active, created_at")
+          .eq("id", user.id)
+          .maybeSingle(),
+        supabase
+          .from("organization_members")
+          .select("role, organizations (id, name, industry, currency, is_platform)")
+          .eq("user_id", user.id)
+          .eq("is_active", true)
+          .order("created_at")
+          .limit(1),
+      ]),
+    ([profileResult, membershipResult]) => [profileResult.error, membershipResult.error],
+  );
 
   if (error) {
     throw new Error(`Could not load your organization: ${error.message}`);

@@ -15,6 +15,7 @@ import {
   summarizeTotals,
 } from "../src/lib/money";
 import { buildPaymentLinkLines, handleStripeEvent } from "../src/server/payments/logic";
+import { isClockSkewError, retryOnClockSkew } from "../src/server/auth/retry";
 
 test("dollarsToCents reads what people type", () => {
   assert.equal(dollarsToCents("997"), 99700);
@@ -170,4 +171,54 @@ test("the webhook signature check accepts a signed payload and rejects a tampere
 
   assert.throws(() => stripe.webhooks.constructEvent(payload.replace("plink_1", "plink_2"), header, secret));
   assert.throws(() => stripe.webhooks.constructEvent(payload, header, "whsec_wrong"));
+});
+
+test("only the token clock skew error counts as clock skew", () => {
+  assert.equal(isClockSkewError({ message: "JWT issued at future", code: "PGRST303" }), true);
+  assert.equal(isClockSkewError({ message: "jwt Issued At Future" }), true);
+  assert.equal(isClockSkewError({ message: "JWT expired", code: "PGRST303" }), false);
+  assert.equal(isClockSkewError({ message: "permission denied for table leads" }), false);
+  assert.equal(isClockSkewError(null), false);
+  assert.equal(isClockSkewError(undefined), false);
+});
+
+test("a clock skew error is retried once and the second result wins", async () => {
+  let calls = 0;
+  const result = await retryOnClockSkew(
+    async () => (++calls === 1 ? { error: { message: "JWT issued at future" } } : { error: null }),
+    (r) => [r.error],
+    0,
+  );
+  assert.equal(calls, 2);
+  assert.equal(result.error, null);
+});
+
+test("clock skew on a second try is not retried again", async () => {
+  let calls = 0;
+  const result = await retryOnClockSkew(
+    async () => {
+      calls++;
+      return { error: { message: "JWT issued at future" } };
+    },
+    (r) => [r.error],
+    0,
+  );
+  assert.equal(calls, 2);
+  assert.equal(result.error?.message, "JWT issued at future");
+});
+
+test("success and other errors come back from the first try untouched", async () => {
+  for (const error of [null, { message: "permission denied" }, { message: "JWT expired" }]) {
+    let calls = 0;
+    const result = await retryOnClockSkew(
+      async () => {
+        calls++;
+        return [{ error: null }, { error }];
+      },
+      ([a, b]) => [a.error, b.error],
+      0,
+    );
+    assert.equal(calls, 1);
+    assert.equal(result[1].error, error);
+  }
 });

@@ -14,7 +14,10 @@ export const BUTTON =
 export const BUTTON_QUIET =
   "inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50";
 
-export const LINK_DANGER = "text-sm text-rose-600 underline hover:text-rose-800 disabled:opacity-50";
+/** Text links and small buttons get a 44px tall tap area on phones, same look. */
+export const TAP = "inline-flex min-h-11 items-center sm:min-h-0";
+
+export const LINK_DANGER = `${TAP} text-sm text-rose-600 underline hover:text-rose-800 disabled:opacity-50`;
 
 export const PAGE = "mx-auto max-w-5xl p-4 sm:p-8";
 

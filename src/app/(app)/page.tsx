@@ -5,6 +5,7 @@ import { stageLabel } from "@/server/pipeline/stages";
 import { getSalesStats } from "@/server/deals";
 import { requireUser } from "@/server/auth";
 import { formatMoney, summarizeTotals } from "@/lib/money";
+import { TAP } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -62,7 +63,7 @@ export default async function DashboardPage() {
       <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
         <div className="flex items-center justify-between">
           <h2 className="font-semibold">Pipeline</h2>
-          <Link href="/pipeline" className="text-sm text-slate-500 underline">
+          <Link href="/pipeline" className={`${TAP} text-sm text-slate-500 underline`}>
             Open board
           </Link>
         </div>

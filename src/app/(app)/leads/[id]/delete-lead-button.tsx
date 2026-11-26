@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { deleteLead } from "@/server/leads/actions";
+import { TAP } from "@/components/ui";
 
 // Two step delete: the first click asks, the second one deletes. Locks while
 // the server action runs so repeat clicks can't fire extra deletes.
@@ -13,7 +14,7 @@ export function DeleteLeadButton({ leadId }: { leadId: string }) {
     return (
       <button
         onClick={() => setConfirming(true)}
-        className="inline-flex min-h-11 items-center sm:min-h-0 text-sm text-rose-600 underline hover:text-rose-800"
+        className={`${TAP} text-sm text-rose-600 underline hover:text-rose-800`}
       >
         Delete lead
       </button>

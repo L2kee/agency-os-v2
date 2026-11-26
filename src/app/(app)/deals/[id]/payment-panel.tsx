@@ -6,7 +6,7 @@ import { Check, Copy, ExternalLink } from "lucide-react";
 import { createPaymentLink, markDealLost, markDealWon, reopenDeal } from "@/server/deals/actions";
 import type { DealStatus } from "@/server/deals/types";
 import { formatMoney } from "@/lib/money";
-import { BUTTON, BUTTON_QUIET, CARD, INPUT, LABEL } from "@/components/ui";
+import { BUTTON, BUTTON_QUIET, CARD, INPUT, LABEL, TAP } from "@/components/ui";
 
 const day = (value: string) => format(new Date(value), "MMM d, yyyy");
 
@@ -158,7 +158,7 @@ export function PaymentPanel({
               type="button"
               disabled={pending}
               onClick={() => run(() => markDealWon(dealId))}
-              className="text-slate-600 underline hover:text-slate-900"
+              className={`${TAP} text-slate-600 underline hover:text-slate-900`}
             >
               Paid another way? Mark won
             </button>
@@ -166,7 +166,7 @@ export function PaymentPanel({
               type="button"
               disabled={pending}
               onClick={() => setLosing(true)}
-              className="text-slate-600 underline hover:text-slate-900"
+              className={`${TAP} text-slate-600 underline hover:text-slate-900`}
             >
               Mark lost
             </button>

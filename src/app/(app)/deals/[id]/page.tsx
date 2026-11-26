@@ -5,7 +5,7 @@ import { requireUser } from "@/server/auth";
 import { dealTotals, getDeal, listDealItems } from "@/server/deals";
 import { listProducts } from "@/server/catalog";
 import { firstYearCents, formatMoney, summarizeTotals } from "@/lib/money";
-import { pill } from "@/components/ui";
+import { pill, TAP } from "@/components/ui";
 import { LineEditor } from "./line-editor";
 import { PaymentPanel } from "./payment-panel";
 import { DealDetails } from "./deal-details";
@@ -28,7 +28,7 @@ export default async function DealPage({ params }: { params: Promise<{ id: strin
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-8">
-      <Link href="/deals" className="text-sm text-slate-500 underline">
+      <Link href="/deals" className={`${TAP} text-sm text-slate-500 underline`}>
         ← Deals
       </Link>
 

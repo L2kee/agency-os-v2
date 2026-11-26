@@ -5,7 +5,7 @@ import { Plus } from "lucide-react";
 import { deleteProduct, saveProduct, setProductActive } from "@/server/catalog/actions";
 import type { Product } from "@/server/catalog/types";
 import { centsToInput, formatPrice } from "@/lib/money";
-import { BUTTON, BUTTON_QUIET, CARD, INPUT, LABEL, LINK_DANGER, pill } from "@/components/ui";
+import { BUTTON, BUTTON_QUIET, CARD, INPUT, LABEL, LINK_DANGER, pill, TAP } from "@/components/ui";
 
 const BILLING = [
   { value: "", label: "One time" },
@@ -125,13 +125,13 @@ function ProductRow({
         </div>
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-4 text-sm">
-        <button type="button" onClick={onEdit} className="text-slate-600 underline hover:text-slate-900">
+        <button type="button" onClick={onEdit} className={`${TAP} text-slate-600 underline hover:text-slate-900`}>
           Edit
         </button>
         <button
           type="button"
           onClick={() => run(() => setProductActive(product.id, !product.is_active))}
-          className="text-slate-600 underline hover:text-slate-900"
+          className={`${TAP} text-slate-600 underline hover:text-slate-900`}
         >
           {product.is_active ? "Archive" : "Restore"}
         </button>
@@ -141,7 +141,7 @@ function ProductRow({
             <button type="button" onClick={() => run(() => deleteProduct(product.id))} className={LINK_DANGER}>
               Yes, delete
             </button>
-            <button type="button" onClick={() => setConfirming(false)} className="text-slate-600 underline">
+            <button type="button" onClick={() => setConfirming(false)} className={`${TAP} text-slate-600 underline`}>
               Cancel
             </button>
           </span>

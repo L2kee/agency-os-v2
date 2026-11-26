@@ -5,7 +5,7 @@ import { requireUser } from "@/server/auth";
 import { getCustomer, listContacts } from "@/server/customers";
 import { createDeal, dealTotals, listDealsFor } from "@/server/deals";
 import { summarizeTotals } from "@/lib/money";
-import { BUTTON_QUIET, CARD, pill } from "@/components/ui";
+import { BUTTON_QUIET, CARD, pill, TAP } from "@/components/ui";
 import { CustomerForm } from "../customer-form";
 import { ContactsPanel } from "./contacts-panel";
 import { DeleteCustomer } from "./delete-customer";
@@ -22,7 +22,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-8">
-      <Link href="/customers" className="text-sm text-slate-500 underline">
+      <Link href="/customers" className={`${TAP} text-sm text-slate-500 underline`}>
         ← Customers
       </Link>
 

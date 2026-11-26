@@ -14,7 +14,7 @@ import {
   intervalSuffix,
   type Totals,
 } from "@/lib/money";
-import { BUTTON, BUTTON_QUIET, CARD, INPUT, LABEL } from "@/components/ui";
+import { BUTTON, BUTTON_QUIET, CARD, INPUT, LABEL, TAP } from "@/components/ui";
 
 export function LineEditor({
   dealId,
@@ -143,7 +143,7 @@ export function LineEditor({
           <button
             type="button"
             onClick={() => setCustomOpen(true)}
-            className="mt-4 text-sm text-slate-600 underline hover:text-slate-900"
+            className={`${TAP} mt-4 text-sm text-slate-600 underline hover:text-slate-900`}
           >
             Add a custom line
           </button>
@@ -266,7 +266,7 @@ function LineRow({
           onClick={onRemove}
           disabled={disabled}
           aria-label={`Remove ${item.name}`}
-          className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-rose-600"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-rose-600 sm:min-h-0 sm:min-w-0"
         >
           <X size={16} aria-hidden="true" />
         </button>

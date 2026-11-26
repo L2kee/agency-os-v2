@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { createDeal } from "@/server/deals";
 import { listCustomerOptions } from "@/server/customers";
-import { BUTTON, CARD, INPUT, LABEL } from "@/components/ui";
+import { BUTTON, CARD, INPUT, LABEL, TAP } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ export default async function NewDealPage({
 
   return (
     <div className="mx-auto max-w-xl p-4 sm:p-8">
-      <Link href="/deals" className="text-sm text-slate-500 underline">
+      <Link href="/deals" className={`${TAP} text-sm text-slate-500 underline`}>
         ← Deals
       </Link>
       <h1 className="mt-2 text-2xl font-semibold">New deal</h1>

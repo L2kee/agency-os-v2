@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { deleteDeal, updateDeal } from "@/server/deals/actions";
-import { BUTTON, CARD, INPUT, LABEL, LINK_DANGER } from "@/components/ui";
+import { BUTTON, CARD, INPUT, LABEL, LINK_DANGER, TAP } from "@/components/ui";
 
 export function DealDetails({
   dealId,
@@ -67,7 +67,7 @@ export function DealDetails({
             >
               Yes, delete
             </button>
-            <button type="button" onClick={() => setConfirming(false)} className="text-slate-600 underline">
+            <button type="button" onClick={() => setConfirming(false)} className={`${TAP} text-slate-600 underline`}>
               Cancel
             </button>
           </span>

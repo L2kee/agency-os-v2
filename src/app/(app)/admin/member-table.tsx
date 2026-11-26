@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { setMemberActive, setMemberRole, removeMember } from "@/server/access/actions";
 import type { MemberRow } from "@/server/access/types";
+import { TAP } from "@/components/ui";
 
 export function MemberTable({
   rows,
@@ -80,7 +81,7 @@ export function MemberTable({
                       <div className="flex flex-col items-end gap-2 sm:flex-row sm:justify-end sm:gap-3">
                         <button
                           onClick={() => run(() => setMemberActive(r.id, !r.isActive))}
-                          className="text-xs text-slate-500 underline hover:text-slate-900"
+                          className={`${TAP} text-xs text-slate-500 underline hover:text-slate-900`}
                         >
                           {r.isActive ? "Deactivate" : "Reactivate"}
                         </button>
@@ -89,7 +90,7 @@ export function MemberTable({
                             if (confirm(`Remove ${r.email}? Their leads, deals, and customers move to you.`))
                               run(() => removeMember(r.id));
                           }}
-                          className="text-xs text-rose-600 underline hover:text-rose-800"
+                          className={`${TAP} text-xs text-rose-600 underline hover:text-rose-800`}
                         >
                           Remove
                         </button>

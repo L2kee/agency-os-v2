@@ -16,6 +16,7 @@ import {
 import { STAGES, type StageId } from "@/server/pipeline/stages";
 import { moveLeadToStage } from "@/server/pipeline/actions";
 import type { Lead } from "@/server/leads/types";
+import { TAP } from "@/components/ui";
 
 const money = (n: number | null) =>
   (n ?? 0).toLocaleString("en-US", {
@@ -151,7 +152,7 @@ function CardBody({ lead, dragging }: { lead: Lead; dragging?: boolean }) {
           href={`/leads/${lead.id}`}
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
-          className="shrink-0 text-xs text-slate-400 underline hover:text-slate-900"
+          className={`${TAP} -my-3.5 shrink-0 text-xs text-slate-400 underline hover:text-slate-900 sm:my-0`}
         >
           open
         </Link>
